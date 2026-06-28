@@ -65,22 +65,53 @@ The application uses two primary database models:
 - User: stores authentication information and related notes
 - Note: stores the note title, markdown content, tags, pin state, and ownership information
 
-## Development Notes
+## Getting Started
 
-To run the app locally:
+To run the app locally, install dependencies and start both the client and server.
 
-### Client
+### 1. Start the backend server
+```bash
+cd server
+npm install
+npm run dev
+```
+
+The server listens on `http://localhost:3001` by default and uses the `.env` file in `server/`.
+
+### 2. Start the frontend app
 ```bash
 cd client
 npm install
 npm run dev
 ```
 
-### Server
+The Vite app runs on `http://localhost:5173` by default and proxies API requests to the server.
+
+### Environment
+- The backend expects a `server/.env` file with at least:
+  - `DATABASE_URL="file:./dev.db"`
+  - `PORT=3001`
+  - `JWT_SECRET="your_secret_here"`
+
+### Quick run summary
 ```bash
 cd server
 npm install
 npm run dev
+# open a second terminal
+cd client
+npm install
+npm run dev
+```
+
+You need to run specific Prisma commands before your backend project can talk to your SQL database
+```bash
+# 1. Instantly build your local database tables to match your code
+npx prisma db push
+
+# 2. Generate the auto-complete client code for your JavaScript files
+npx prisma generate
+
 ```
 
 ## Why This Stack Fits the Project
