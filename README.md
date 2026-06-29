@@ -114,6 +114,12 @@ npx prisma generate
 
 ```
 
+Create and apply a new migration to your database is you modify `schema.prisma` file
+
+```bash
+npx prisma migrate dev
+```
+
 ## Why This Stack Fits the Project
 
 This stack was chosen because it balances simplicity, performance, and developer productivity:
