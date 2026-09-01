@@ -37,3 +37,17 @@ export async function apiGetMe(token) {
   if (!res.ok) throw new Error('Session invalid');
   return res.json(); // { id, username, email, notesCount, pinnedCount }
 }
+
+export async function apiDeleteAccount(token) {
+  const res = await fetch(`${API_BASE}/auth/account`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    const err = new Error(data.error || 'Failed to delete account');
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}

@@ -104,4 +104,25 @@ router.get('/me', async (req, res) => {
   }
 });
 
+// ─── DELETE /api/auth/account ─────────────────────────────────────────────────
+router.delete('/account', async (req, res) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'No token provided.' });
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    if (!user) return res.status(404).json({ error: 'User not found.' });
+
+    // Delete all notes first, then the user
+    await prisma.note.deleteMany({ where: { userId: user.id } });
+    await prisma.user.delete({ where: { id: user.id } });
+
+    res.json({ message: 'Account deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

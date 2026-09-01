@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { apiLogin, apiRegister, apiGetMe } from '../api/auth';
+import { apiLogin, apiRegister, apiGetMe, apiDeleteAccount } from '../api/auth';
 
 const AuthContext = createContext(null);
 
@@ -47,6 +47,14 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
+  const deleteAccount = useCallback(async () => {
+    if (!token) return;
+    await apiDeleteAccount(token);
+    localStorage.removeItem(TOKEN_KEY);
+    setToken(null);
+    setUser(null);
+  }, [token]);
+
   // Refresh user stats (call after note operations)
   const refreshUser = useCallback(async () => {
     if (!token) return;
@@ -59,7 +67,7 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout, deleteAccount, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

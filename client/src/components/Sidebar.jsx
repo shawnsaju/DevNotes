@@ -4,18 +4,20 @@ import { fetchTags, fetchNotes } from '../api/notes';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import logo from '../assets/logo.png';
+import SettingsModal from './SettingsModal';
 
 export default function Sidebar({ activeTag, onTagSelect, refreshKey }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   const isTrash = location.pathname === '/trash';
 
-  const [tags,        setTags]        = useState([]);
-  const [totalNotes,  setTotalNotes]  = useState(0);
-  const [pinnedNotes, setPinnedNotes] = useState(0);
+  const [tags,           setTags]           = useState([]);
+  const [totalNotes,     setTotalNotes]     = useState(0);
+  const [pinnedNotes,    setPinnedNotes]    = useState(0);
+  const [settingsOpen,   setSettingsOpen]   = useState(false);
 
   useEffect(() => {
     fetchTags().then(setTags).catch(() => {});
@@ -28,11 +30,6 @@ export default function Sidebar({ activeTag, onTagSelect, refreshKey }) {
   const handleSelect = (tag) => {
     onTagSelect(tag);
     navigate('/');
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
   };
 
   return (
@@ -127,7 +124,7 @@ export default function Sidebar({ activeTag, onTagSelect, refreshKey }) {
         )}
       </div>
 
-      {/* ── Footer: User info + Logout ── */}
+        {/* ── Footer: User info + Settings ── */}
       <div className="sidebar-footer">
         <div className="sidebar-user">
           <div className="sidebar-user-avatar">
@@ -139,22 +136,24 @@ export default function Sidebar({ activeTag, onTagSelect, refreshKey }) {
           </div>
         </div>
         <button
-          id="logout-btn"
-          className="btn-icon danger"
-          onClick={handleLogout}
-          title="Sign out"
-          aria-label="Sign out"
+          id="settings-open-btn"
+          className="btn-icon"
+          onClick={() => setSettingsOpen(true)}
+          title="Settings"
+          aria-label="Open settings"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             fill="none" stroke="currentColor" strokeWidth="2"
             strokeLinecap="round" strokeLinejoin="round"
             width="16" height="16">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
         </button>
       </div>
+
+      {/* Settings Modal — always mounted, toggled via CSS */}
+      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </aside>
   );
 }
